@@ -1,7 +1,14 @@
 Development Version
 -------------------
 
-Nothing yet.
+Bug Fixes
+
+* Add additional protection against denial of service attacks when parsing
+  very large lists of tuples. This enhances the existing recursion protections
+  with configurable limits for token processing to prevent DoS through
+  algorithmic complexity attacks. The new limits (MAX_GROUPING_DEPTH=100,
+  MAX_GROUPING_TOKENS=10000) can be adjusted or disabled (by setting to None)
+  if needed for legitimate large SQL statements.
 
 
 Release 0.5.3 (Dez 10, 2024)

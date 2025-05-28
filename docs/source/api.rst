@@ -73,3 +73,39 @@ The :meth:`~sqlparse.format` function accepts the following keyword arguments.
   If ``True`` comma-first notation for column names is used.
 
 
+Security and Performance Considerations
+---------------------------------------
+
+For developers working with very large SQL statements or in security-sensitive
+environments, sqlparse includes built-in protections against potential denial
+of service (DoS) attacks:
+
+**Grouping Limits**
+  The parser includes configurable limits to prevent excessive resource
+  consumption when processing very large or deeply nested SQL structures:
+
+  - ``MAX_GROUPING_DEPTH`` (default: 100) - Limits recursion depth during token grouping
+  - ``MAX_GROUPING_TOKENS`` (default: 10,000) - Limits the number of tokens processed in a single grouping operation
+
+  These limits can be modified by changing the constants in ``sqlparse.engine.grouping``
+  if your application requires processing larger SQL statements. Set a limit to ``None``
+  to completely disable it. However, increasing these values or disabling limits may
+  expose your application to DoS vulnerabilities when processing untrusted SQL input.
+
+  Example of modifying limits::
+
+    import sqlparse.engine.grouping
+
+    # Increase limits (use with caution)
+    sqlparse.engine.grouping.MAX_GROUPING_DEPTH = 200
+    sqlparse.engine.grouping.MAX_GROUPING_TOKENS = 50000
+
+    # Disable limits completely (use with extreme caution)
+    sqlparse.engine.grouping.MAX_GROUPING_DEPTH = None
+    sqlparse.engine.grouping.MAX_GROUPING_TOKENS = None
+
+.. warning::
+   Increasing the grouping limits or disabling them completely may make your
+   application vulnerable to DoS attacks when processing untrusted SQL input.
+   Only modify these values if you are certain about the source and size of
+   your SQL statements.
