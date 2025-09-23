@@ -19,13 +19,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-        os: [ubuntu-latest]
         include:
-          # Test on additional platforms for latest Python
-          - python-version: "3.11"
+          - python-version: "py38"
+            os: ubuntu-latest
+          - python-version: "py39"
+            os: ubuntu-latest
+          - python-version: "py310"
+            os: ubuntu-latest
+          - python-version: "py311"
+            os: ubuntu-latest
+          - python-version: "py312"
+            os: ubuntu-latest
+          - python-version: "py313"
+            os: ubuntu-latest
+          # Test on additional platforms for Python 3.11
+          - python-version: "py311"
             os: macos-latest
-          - python-version: "3.11"
+          - python-version: "py311"
             os: windows-latest
 
     steps:
@@ -38,16 +48,16 @@ jobs:
         cache: true
 
     - name: Install dependencies and run tests
-      run: pixi run test-py${{ matrix.python-version | replace('.', '') }}
+      run: pixi run test-${{ matrix.python-version }}
 
     - name: Run lint (Python 3.11 only)
-      if: matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
+      if: matrix.python-version == 'py311' && matrix.os == 'ubuntu-latest'
       run: pixi run lint
 
     - name: Generate coverage report (Python 3.11 only)
-      if: matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
+      if: matrix.python-version == 'py311' && matrix.os == 'ubuntu-latest'
       run: pixi run -e py311 coverage && pixi run -e py311 coverage-combine && pixi run -e py311 coverage-xml
 
     - name: Publish to codecov
-      if: matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
+      if: matrix.python-version == 'py311' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v4
