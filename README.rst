@@ -47,6 +47,34 @@ Quick Start
    [<DML 'select' at 0x7f22c5e15368>, <Whitespace ' ' at 0x7f22c5e153b0>, <Wildcard '*' … ]
    >>>
 
+Pre-commit Hook
+---------------
+
+sqlparse can be used as a `pre-commit <https://pre-commit.com/>`_ hook
+to automatically format SQL files before committing:
+
+.. code-block:: yaml
+
+   repos:
+     - repo: https://github.com/andialbrecht/sqlparse
+       rev: 0.5.4  # Use the latest version
+       hooks:
+         - id: sqlformat
+           # Optional: Add more formatting options
+           # IMPORTANT: --in-place is required, already included by default
+           args: [--in-place, --reindent, --keywords, upper]
+
+Then install the hook:
+
+.. code-block:: sh
+
+   $ pre-commit install
+
+Your SQL files will now be automatically formatted on each commit.
+
+**Note**: The hook uses ``--in-place --reindent`` by default. If you override
+the ``args``, you **must** include ``--in-place`` for the hook to work.
+
 Links
 -----
 
