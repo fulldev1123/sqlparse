@@ -51,6 +51,14 @@ doc = [
 [tool.hatch.version]
 path = "sqlparse/__init__.py"
 
+[tool.hatch.build.targets.wheel]
+packages = ["sqlparse"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/sqlparse",
+]
+
 [tool.coverage.run]
 source_pkgs = ["sqlparse", "tests"]
 branch = true
