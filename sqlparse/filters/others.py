@@ -96,17 +96,22 @@ class StripWhitespaceFilter:
             is_first_char = False
 
     def _stripws_identifierlist(self, tlist):
-        # Removes newlines before commas, see issue140
-        last_nl = None
-        for token in list(tlist.tokens):
-            if last_nl and token.ttype is T.Punctuation and token.value == ',':
-                tlist.tokens.remove(last_nl)
-            last_nl = token if token.is_whitespace else None
-
-            # next_ = tlist.token_next(token, skip_ws=False)
-            # if (next_ and not next_.is_whitespace and
-            #             token.ttype is T.Punctuation and token.value == ','):
-            #     tlist.insert_after(token, sql.Token(T.Whitespace, ' '))
+        # Removes whitespace before commas, see issue140 and issue823
+        # First pass: identify all whitespace tokens that appear before commas
+        tokens_to_remove = []
+        ws_before_comma = []
+        for token in tlist.tokens:
+            if token.is_whitespace:
+                ws_before_comma.append(token)
+            elif token.ttype is T.Punctuation and token.value == ',':
+                # Mark all collected whitespace for removal
+                tokens_to_remove.extend(ws_before_comma)
+                ws_before_comma = []
+            else:
+                ws_before_comma = []
+        # Second pass: remove marked tokens
+        for token in tokens_to_remove:
+            tlist.tokens.remove(token)
         return self._stripws_default(tlist)
 
     def _stripws_parenthesis(self, tlist):
@@ -123,7 +128,10 @@ class StripWhitespaceFilter:
     def process(self, stmt, depth=0):
         [self.process(sgroup, depth + 1) for sgroup in stmt.get_sublists()]
         self._stripws(stmt)
-        if depth == 0 and stmt.tokens and stmt.tokens[-1].is_whitespace:
+        # Strip trailing whitespace from all groups (not just root level).
+        # This is needed when strip_comments removes comments from inside
+        # groups like Identifier, leaving trailing whitespace behind.
+        while stmt.tokens and stmt.tokens[-1].is_whitespace:
             stmt.tokens.pop(-1)
         return stmt
 
