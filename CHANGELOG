@@ -23,6 +23,8 @@ Bug Fixes
   MAX_GROUPING_TOKENS=10000) can be adjusted or disabled (by setting to None)
   if needed for legitimate large SQL statements.
 * Remove shebang from cli.py and remove executable flag (pr818).
+* Fix strip_comments not removing all comments when input contains only
+  comments (issue801, pr803 by stropysh).
 
 
 Release 0.5.3 (Dez 10, 2024)
