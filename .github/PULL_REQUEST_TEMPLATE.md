@@ -11,3 +11,9 @@ following checklist:
 In addition, please take care to provide a proper description
 on what your change does, fixes or achieves when submitting the 
 pull request.
+
+---
+
+**Note:** This repository has automated AI code reviews enabled to help catch
+potential issues early and provide suggestions. This is an experimental
+feature to support maintainers and contributors – your feedback is welcome!
